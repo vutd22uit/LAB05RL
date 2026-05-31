@@ -92,6 +92,14 @@ Cố định `gae_lambda = 0.95`, thay đổi `clip_ratio ∈ {0.05, 0.2, 0.5}`.
 | **0.20**   | 41.99               | 28.07        | 8.95        | 33.50     | 4.08     |
 | **0.50**   | 31.58               | 28.65        | 8.36        | 46.90     | 6.47     |
 
+**Hình 1.** Reward curves theo từng epoch (đường mờ = raw, đường đậm = moving average 4 epoch).
+
+![Hình 1 - Clip Ratio training curves](figures/fig1_clip_ratio_curves.png)
+
+**Hình 2.** So sánh return cuối training (3 epoch cuối) và return đánh giá deterministic.
+
+![Hình 2 - Clip Ratio bar chart](figures/fig2_clip_ratio_bars.png)
+
 > *Final avg ep return*: trung bình của 3 epoch cuối — đo điểm cuối training.
 > *Overall*: tính trên toàn bộ 24 epoch — phản ánh quá trình học.
 > *Eval*: chạy 10 episode với policy deterministic (greedy) sau training.
@@ -130,6 +138,18 @@ Cố định `clip_ratio = 0.2`, thay đổi `gae_lambda ∈ {0.5, 0.95, 0.99}`.
 | **0.95**   | 41.99               | 28.07        | 8.95        | 35.00     | 7.52     |
 | **0.99**   | 28.64               | 26.17        | 4.12        | **212.00** | 151.38  |
 
+**Hình 3.** Reward curves theo từng epoch cho 3 giá trị λ.
+
+![Hình 3 - GAE Lambda training curves](figures/fig3_gae_lambda_curves.png)
+
+**Hình 4.** So sánh return cuối training và return đánh giá deterministic.
+
+![Hình 4 - GAE Lambda bar chart](figures/fig4_gae_lambda_bars.png)
+
+**Hình 5.** Minh hoạ trade-off variance — std lúc training (noise của learning curve) và std lúc evaluation (sự không nhất quán giữa các episode đánh giá). Quan sát rõ ràng `λ=0.99` có **eval std = 151** rất cao, đúng với dự đoán của lý thuyết bias-variance.
+
+![Hình 5 - Variance comparison](figures/fig5_lambda_variance.png)
+
 ### 4.2. Phân tích
 
 **Lý thuyết bias-variance của GAE:**
@@ -156,13 +176,17 @@ Cố định `clip_ratio = 0.2`, thay đổi `gae_lambda ∈ {0.5, 0.95, 0.99}`.
 
 ---
 
-## 5. Biểu đồ minh hoạ
+## 5. Tổng hợp các hình minh hoạ
 
-Reward curves (moving average 4 epoch) được vẽ tự động trong notebook cell 3.3. Quan sát chính:
-- **Sweep clip_ratio**: đường `clip=0.2` leo nhanh nhất sau epoch 15; `clip=0.05` leo từ tốn đều; `clip=0.5` có vài đỉnh nhọn rồi quay lại.
-- **Sweep gae_lambda**: đường `λ=0.5` tăng nhanh sớm rồi chững; `λ=0.95` ổn định; `λ=0.99` dao động mạnh nhưng có giai đoạn vượt trội.
+| Hình | Nội dung | File |
+|---|---|---|
+| 1 | Reward curve sweep clip_ratio | `figures/fig1_clip_ratio_curves.png` |
+| 2 | Bar chart final vs eval của clip_ratio | `figures/fig2_clip_ratio_bars.png` |
+| 3 | Reward curve sweep gae_lambda | `figures/fig3_gae_lambda_curves.png` |
+| 4 | Bar chart final vs eval của gae_lambda | `figures/fig4_gae_lambda_bars.png` |
+| 5 | Variance comparison theo λ (bias-variance) | `figures/fig5_lambda_variance.png` |
 
-(Biểu đồ được render bằng `matplotlib.pyplot.show()` trong notebook — xem trực tiếp khi chạy notebook.)
+Tất cả các hình được sinh trực tiếp từ kết quả huấn luyện thực tế (24 epoch × 512 rollout steps, seed=42). Số liệu chi tiết lưu tại `figures/metrics.json`.
 
 ---
 
